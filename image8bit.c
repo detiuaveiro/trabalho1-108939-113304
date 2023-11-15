@@ -10,9 +10,9 @@
 /// 2013, 2023
 
 // Student authors (fill in below):
-// NMec:  Name:
-// 
-// 
+// NMec: 113304  Name: Duarte Rainho dos Santos
+// NMec:         Name:
+// NMec:         Name:
 // 
 // Date:
 //
@@ -171,7 +171,28 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   assert (width >= 0);
   assert (height >= 0);
   assert (0 < maxval && maxval <= PixMax);
-  // Insert your code here!
+  // Insert your code here! 
+  Image img = (Image)malloc(sizeof(struct image)); // Desta forma estamos a fazer uma alocação dinâmica na memória.
+  
+  if (img == NULL) {                                        // Em caso de erro:
+    check((img != NULL), "Alocação de Memória falhou");     //    Mensagem de erro
+    //free(img);                                              //    Liberta de espaço da memória;
+    return NULL;                                            //    Como falhou retorna NULL
+  }
+
+  img -> width = width;
+  img -> height = height;
+  img->maxval = maxval;
+
+  // Alocação de memória para o array de pixels
+  img->pixel = (uint8*)malloc(width * height * sizeof(uint8));
+  if (img->pixel == NULL) {                                                               // Em caso de erro:
+    free(img);                                                                            //     liberamos a memória alocada para a estrutura Image
+    check((img->pixel != NULL), "AAlocação de memória para o data pixel falhou");         //      Mensagem de erro
+    return NULL;                                                                          //      Retorno NULL;
+  }
+
+  return img;
 }
 
 /// Destroy the image pointed to by (*imgp).
@@ -182,6 +203,9 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
+  free((*imgp)->pixel); // Esta linha libera a memória alocada para o campo pixel
+  free(*imgp);          // Desaloca bloco de memória, liberta o número de bits que foram solicitados quando foi alocado.
+  *imgp = NULL;         // Desta maneira garantimos que (*imgp) é NULL
 }
 
 
