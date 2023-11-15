@@ -203,9 +203,9 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
-  free((*imgp)->pixel); // Esta linha libera a memória alocada para o campo pixel
-  free(*imgp);          // Desaloca bloco de memória, liberta o número de bits que foram solicitados quando foi alocado.
-  *imgp = NULL;         // Desta maneira garantimos que (*imgp) é NULL
+  free((*imgp)->pixel);   // Esta linha libera a memória alocada para o campo pixel
+  free(*imgp);            // Desaloca bloco de memória, liberta o número de bits que foram solicitados quando foi alocado.
+  *imgp = NULL;           // Desta maneira garantimos que (*imgp) é NULL
 }
 
 
@@ -318,6 +318,13 @@ int ImageMaxval(Image img) { ///
 void ImageStats(Image img, uint8* min, uint8* max) { ///
   assert (img != NULL);
   // Insert your code here!
+
+  (*max) = 0;  // Definir um máximo temporário;
+  (*min) = PixMax;  // Definir um minimo temporário;
+
+  for () {
+    
+  }
 }
 
 /// Check if pixel position (x,y) is inside img.
