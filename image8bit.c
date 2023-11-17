@@ -361,11 +361,11 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 static inline int G(Image img, int x, int y) {
   int index;
   // Insert your code here!
-  assert (0 <= index && index < img->width*img->height);
 
-  index = x + (y * img->width);
+  index = x + (y * img->width);  // Calculo do indice para as coordenadas (x, y);
 
-  return index;
+  assert (0 <= index && index < img->width*img->height);  // Verificação se esse indice está dentro dos valores corretos
+  return index;  //retorno do indice.
 }
 
 /// Get the pixel (level) at position (x,y).
@@ -537,7 +537,14 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
 
-  
+  for(int i=0; i<img2->width; i++) {
+    for(int j=0; j<img2->height; j++) {
+
+      if ((x+i < img1->width) && (y + j < img1->height)) {
+        ImageSetPixel(img1, i+x, j+y, ImageGetPixel(img2, i, j));
+      }
+    }
+  }
 }
 
 /// Blend an image into a larger image.
@@ -551,6 +558,7 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+
 }
 
 /// Compare an image to a subimage of a larger image.
@@ -561,6 +569,16 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
+
+  for(int i=0; i<img2->width; i++) {
+    for(int j=0; j<img2->height; j++) {
+
+      if (ImageGetPixel(img1, x+i, y+j) != ImageGetPixel(img2, i, y)) {
+        return 0;
+      }
+
+    }
+  } return 1;
 }
 
 /// Locate a subimage inside another image.
@@ -571,6 +589,18 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
+
+  for(int i=0; i < (img1->width - img2->width); i++) {
+    for(int j=0; j < (img1->height - img2->width); j++) {
+
+      if (ImageMatchSubImage(img1, i, j, img2)) {
+        *px = i;
+        *py = j;
+        return 1;
+      }
+
+    }
+  } return 0;
 }
 
 
