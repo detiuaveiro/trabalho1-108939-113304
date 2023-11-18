@@ -559,6 +559,17 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
 
+  double newPixel;
+
+  for(int i=0; i<img2->width; i++) {
+    for(int j=0; j<img2->height; j++) {
+
+      newPixel = (1 - alpha) * ImageGetPixel(img1, x + i, j + y) + alpha * ImageGetPixel(img2, i, j);
+      newPixel = (newPixel < 0) ? 0 : ((newPixel > PixMax) ? PixMax : newPixel); 
+      ImageSetPixel(img1, i + x, j + y, (uint8)(newPixel+0.5));
+    }
+  }
+
 }
 
 /// Compare an image to a subimage of a larger image.
@@ -612,5 +623,41 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
+
+  assert(img != NULL);
+
+  Image tempImg = ImageCreate(img->width, img->height, img->maxval);
+
+  for(int x=0; x < img->width; x++) {
+    for(int y=0; y < img->height; y++) {
+
+      double sum = 0.0;
+      int count = 0;
+
+      for(int i=-dx; i < (dx+1); i++) {
+        for(int j=-dy; j < (dy+1); j++) {
+
+          if (ImageValidPos(img, i+x, j+y)) {
+            sum += ImageGetPixel(img, i+x, j+y);
+            count++;
+          }
+        }
+      }
+
+      double media = sum / count;
+
+      ImageSetPixel(tempImg, x, y, (uint8)(media+0.5));
+
+    }
+  }
+
+  for(int x=0; x < img->width; x++) {
+    for(int y=0; y < img->height; y++) {
+      ImageSetPixel(img, x, y, ImageGetPixel(tempImg, x, y));
+    }
+  } 
+
+  ImageDestroy(&tempImg);
+
 }
 
