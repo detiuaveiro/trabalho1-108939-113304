@@ -581,15 +581,17 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
 
-  for(int i=0; i<img2->width; i++) {
-    for(int j=0; j<img2->height; j++) {
-
-      if (ImageGetPixel(img1, x+i, y+j) != ImageGetPixel(img2, i, y)) {
-        return 0;
+  for (int j = 0; j < img2->height; ++j) {
+    for (int i = 0; i < img2->width; ++i) {
+      uint8 pixel1 = ImageGetPixel(img1, x + i, y + j);
+      uint8 pixel2 = ImageGetPixel(img2, i, j);
+      if (pixel1 != pixel2) {
+        return 0;  // Mismatch found
       }
-
     }
-  } return 1;
+  }
+
+  return 1;  // Subimage matches
 }
 
 /// Locate a subimage inside another image.
