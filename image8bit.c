@@ -190,8 +190,8 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   // Alocação de memória para o array de pixels
   img->pixel = (uint8*)malloc(width * height * sizeof(uint8));
   if (img->pixel == NULL) {                                                               // Em caso de erro:
-    free(img);                                                                            //     liberamos a memória alocada para a estrutura Image
     check((img->pixel != NULL), "AAlocação de memória para o data pixel falhou");         //      Mensagem de erro
+    free(img);                                                                            //     liberamos a memória alocada para a estrutura Image
     return NULL;                                                                          //      Retorno NULL;
   }
 
