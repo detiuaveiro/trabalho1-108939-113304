@@ -147,12 +147,15 @@ void ImageInit(void) { ///
   InstrCalibrate();
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   // Name other counters here...
+  InstrName[1] = "NumComparacoes";
   
 }
 
 // Macros to simplify accessing instrumentation counters:
 #define PIXMEM InstrCount[0]
 // Add more macros here...
+
+#define NUMCOMP InstrCount[1]
 
 // TIP: Search for PIXMEM or InstrCount to see where it is incremented!
 
@@ -585,6 +588,7 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
     for (int i = 0; i < img2->width; ++i) {
       uint8 pixel1 = ImageGetPixel(img1, x + i, y + j);
       uint8 pixel2 = ImageGetPixel(img2, i, j);
+      NUMCOMP += 1;
       if (pixel1 != pixel2) {
         return 0;  // Mismatch found
       }
@@ -604,7 +608,7 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   // Insert your code here!
 
   for(int i=0; i < (img1->width - img2->width); i++) {
-    for(int j=0; j < (img1->height - img2->width); j++) {
+    for(int j=0; j < (img1->height - img2->height); j++) {
 
       if (ImageMatchSubImage(img1, i, j, img2)) {
         *px = i;

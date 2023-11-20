@@ -19,40 +19,83 @@
 #include "instrumentation.h"
 
 int main(int argc, char* argv[]) {
-  program_name = argv[0];
-  if (argc != 3) {
-    error(1, 0, "Usage: imageTest input.pgm output.pgm");
-  }
-
-  ImageInit();
   
-  printf("# LOAD image");
-  InstrReset(); // to reset instrumentation
-  Image img1 = ImageLoad(argv[1]);
-  if (img1 == NULL) {
-    error(2, errno, "Loading %s: %s", argv[1], ImageErrMsg());
-  }
-  InstrPrint(); // to print instrumentation
+  /*
+    !Testes Default:
 
-  // Try changing the behaviour of the program by commenting/uncommenting
-  // the appropriate lines.
+    program_name = argv[0];
+    if (argc != 3) {
+      error(1, 0, "Usage: imageTest input.pgm input2.pgm");
+    }
 
-  //img2 = ImageCrop(img1, ImageWidth(img1)/4, ImageHeight(img1)/4, ImageWidth(img1)/2, ImageHeight(img1)/2);
-  Image img2 = ImageRotate(img1);
-  if (img2 == NULL) {
-    error(2, errno, "Rotating img2: %s", ImageErrMsg());
-  }
+    ImageInit();
+    
+    printf("# LOAD image1");
+    InstrReset(); // to reset instrumentation
+    Image img1 = ImageLoad(argv[1]);
+    if (img1 == NULL) {
+      error(2, errno, "Loading %s: %s", argv[1], ImageErrMsg());
+    }
+    InstrPrint(); // to print instrumentation
 
-  //ImageNegative(img2);
-  //ImageThreshold(img2, 100);
-  ImageBrighten(img2, 1.3);
 
-  if (ImageSave(img2, argv[2]) == 0) {
-    error(2, errno, "%s: %s", argv[2], ImageErrMsg());
-  }
+    Try changing the behaviour of the program by commenting/uncommenting
+    the appropriate lines.
 
-  ImageDestroy(&img1);
-  ImageDestroy(&img2);
-  return 0;
+    img2 = ImageCrop(img1, ImageWidth(img1)/4, ImageHeight(img1)/4, ImageWidth(img1)/2, ImageHeight(img1)/2);
+    Image img2 = ImageRotate(img1);
+    if (img2 == NULL) {
+      error(2, errno, "Rotating img2: %s", ImageErrMsg());
+    }
+
+    ImageNegative(img2);
+    ImageThreshold(img2, 100);
+    ImageBrighten(img2, 1.3);
+
+    if (ImageSave(img2, argv[2]) == 0) {
+      error(2, errno, "%s: %s", argv[2], ImageErrMsg());
+    }
+
+    ImageDestroy(&img1);
+    ImageDestroy(&img2);
+    return 0;
+  */
+
+
+  /*
+    !Testes ImageLocateSubImage():
+
+    program_name = argv[0];
+    if (argc != 3) {
+      error(1, 0, "Usage: imageTest input1.pgm input2.pgm");
+    }
+
+    ImageInit();
+    
+    printf("# LOAD image1");
+    InstrReset(); // to reset instrumentation
+    Image img1 = ImageLoad(argv[1]);
+    if (img1 == NULL) {
+      error(2, errno, "Loading %s: %s", argv[1], ImageErrMsg());
+    }
+    InstrPrint(); // to print instrumentation
+
+    printf("# LOAD image2");
+    InstrReset(); // to reset instrumentation
+    Image img2 = ImageLoad(argv[2]);
+    if (img2 == NULL) {
+      error(2, errno, "Loading %s: %s", argv[2], ImageErrMsg());
+    }
+    InstrPrint(); // to print instrumentation
+  
+    InstrReset();
+    int px;
+    int py;
+    ImageLocateSubImage(img1, &px, &py, img2);
+    InstrPrint();
+
+    ImageDestroy(&img1);
+    return 0;
+  */
 }
 
