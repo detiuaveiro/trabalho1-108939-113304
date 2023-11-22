@@ -627,8 +627,11 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// Each pixel is substituted by the mean of the pixels in the rectangle
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
-void ImageBlur(Image img, int dx, int dy) { ///
-  // Insert your code here!
+
+
+
+
+void ImageBlur(Image img, int dx, int dy) {
 
   assert(img != NULL);
 
@@ -667,3 +670,18 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
 }
 
+
+/*
+// ! IMplementação melhorada:
+
+/// Blur an image by a applying a (2dx+1)x(2dy+1) mean filter.
+/// Each pixel is substituted by the mean of the pixels in the rectangle
+/// [x-dx, x+dx]x[y-dy, y+dy].
+/// The image is changed in-place.
+void ImageBlur(Image img, int dx, int dy) { ///
+  // Insert your code here!zzz
+
+  
+
+}
+*/
