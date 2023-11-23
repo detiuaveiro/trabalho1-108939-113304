@@ -75,9 +75,9 @@ int main(int argc, char* argv[]) {
   //InstrPrint();
 
 
-  /*
-    !Testes ImageLocateSubImage():
 
+
+/*
     program_name = argv[0];
     if (argc != 2) {
       error(1, 0, "Usage: imageTest input.pgm");
@@ -115,30 +115,27 @@ int main(int argc, char* argv[]) {
 
     ImageDestroy(&img1); // Destroy the image pointed to by (*imgp).
     ImageDestroy(&img2); // Destroy the image pointed to by (*imgp).
-  */
+*/
+  
 
-  program_name = argv[0];
+  /*
+    program_name = argv[0];
   if (argc != 2) {
     error(1, 0, "Usage: imageTest input.pgm");
   }
 
   ImageInit();
   printf("# LOAD image1");
-
-  InstrReset(); // to reset instrumentation
-
-  Image img1 = ImageLoad(argv[1]); //oad a raw PGM file, On success, a new image is returned.
+  Image img1 = ImageLoad(argv[1]); 
   if (img1 == NULL) {
     error(2, errno, "Loading %s: %s", argv[1], ImageErrMsg());
   }
-  InstrPrint(); // to print instrumentation
 
   InstrReset(); // to reset instrumentation
-
   ImageBlur(img1, 400, 400);
-
   InstrPrint();
 
   ImageDestroy(&img1); // Destroy the image pointed to by (*imgp).
+  */
 }
 
