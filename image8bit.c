@@ -627,13 +627,14 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// Each pixel is substituted by the mean of the pixels in the rectangle
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
-
-
-
-
 void ImageBlur(Image img, int dx, int dy) {
 
-  assert(img != NULL);
+
+  /*
+  
+    ! Função Básica:
+
+    assert(img != NULL);
 
   Image tempImg = ImageCreate(img->width, img->height, img->maxval);
 
@@ -667,21 +668,69 @@ void ImageBlur(Image img, int dx, int dy) {
   } 
 
   ImageDestroy(&tempImg);
-
-}
-
-
-/*
-// ! IMplementação melhorada:
-
-/// Blur an image by a applying a (2dx+1)x(2dy+1) mean filter.
-/// Each pixel is substituted by the mean of the pixels in the rectangle
-/// [x-dx, x+dx]x[y-dy, y+dy].
-/// The image is changed in-place.
-void ImageBlur(Image img, int dx, int dy) { ///
-  // Insert your code here!zzz
-
   
+  */
+
+  //! FUnção melhorada
+
+  // Insert your code here!
+  assert(img != NULL);  //Verificar se a imagem está NULL!
+
+  int sum, minX, minY, maxX, maxY;
+
+  /*
+    Aqui etsamos a criar uma summed Area Table: Serve para acelerar o cálculo da soma dos
+    valores de uma imagem para uma matriz bidimensional. Com a summed area table, é possível
+    acelerar o processo tornando muito útil para algoritmos de blur.
+  */
+  int **summedAreaTable = (int **)malloc((img->width + 1) * sizeof(int *));
+  for (int i = 0; i < img->width + 1; i++) {
+    summedAreaTable[i] = (int *)malloc((img->height + 1) * sizeof(int));
+  }
+
+  // Preenchimento da summed area table (Funcionamento explicado no relatório)
+  for (int y = 0; y < img->height; y++) {
+    for (int x = 0; x < img->width; x++) {
+
+      sum = ImageGetPixel(img, x, y);
+
+      sum += (x != 0) ? summedAreaTable[x-1][y] : 0;  // Deve slatar a linha de indice 0
+      sum += (y != 0) ? summedAreaTable[x][y-1] : 0;  // Deve slatar a coluna de indice 0
+      sum -= (x != 0  && y != 0) ? summedAreaTable[x-1][y-1] : 0;  // Deve slatar a linha e a coluna de indice 0
+
+      summedAreaTable[x][y] = sum;  // Guarda o valor final na matriz.
+    }
+  }
+
+  /*
+    Depois de criada a summed area table, temos que iterar sobre cada pixel da imagem inicial, aplciando
+    uma janela centrada no pixel de ((2 * dx + 1) x (2 * dy + 1)). Esta janela define a area a qual 
+    será aplicado o blur. Para isso, neste loop apenas temos de calcular a média pois a soma desses valores
+    já está guardada na summed area table. Por fim guardamos na imagem original no pixel o valor calculado.
+  */
+  for (int y = 0; y < img->height; y++) {
+    for (int x = 0; x < img->width; x++) {
+
+      /*
+        Este calculo do maxX, maxY, ... serve para definir a janela, temos der ter em atenção que a janela não pode sair 
+        dos limites de frame, ou seja, o maxX não pode ser menor de 0, caso contrário estariamos fora do frame, o mesmo se
+        aplica para os seguintes valores.
+      */
+      maxX = (x - dx - 1 < 0) ? 0 : x - dx - 1; 
+      maxY = (y - dy - 1 < 0) ? 0 : y - dy - 1;
+
+      minX = (x + dx >= img->width) ? img->width - 1 : x + dx;
+      minY = (y + dy >= img->height) ? img->height - 1 : y + dy;
+     
+     //Em baixo vamos calcular a soma dos limites da janela.
+      int sum = summedAreaTable[minX][minY] - summedAreaTable[maxX][minY] - summedAreaTable[minX][maxY] + summedAreaTable[maxX][maxY];
+      double mean = (double)(sum) / (((minX - maxX) * (minY - maxY)));  //Calculo da media
+
+      ImageSetPixel(img, x, y, (int)(mean+0.5));  // Temos que acrescentar 0.5 à media para podermos ter arredondamentos corretos
+    }
+  }
+
+  free(summedAreaTable[0]);  //Liberta a memória alocada para a tabela de soma
+  free(summedAreaTable);
 
 }
-*/
