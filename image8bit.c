@@ -148,6 +148,7 @@ void ImageInit(void) { ///
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   // Name other counters here...
   InstrName[1] = "NumComparacoes";
+  InstrName[2] = "NumOperacoes";
   
 }
 
@@ -156,6 +157,7 @@ void ImageInit(void) { ///
 // Add more macros here...
 
 #define NUMCOMP InstrCount[1]
+#define NUMOPERACOES InstrCount[2]
 
 // TIP: Search for PIXMEM or InstrCount to see where it is incremented!
 
@@ -175,12 +177,12 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   assert (height >= 0);
   assert (0 < maxval && maxval <= PixMax);
   // Insert your code here! 
-  Image img = (Image)malloc(sizeof(struct image)); // Desta forma estamos a fazer uma alocação dinâmica na memória.
+  Image img = (Image)malloc(sizeof(struct image)); // Alocação dinâmica na memória.
   
-  if (img == NULL) {                                        // Em caso de erro:
-    check((img != NULL), "Alocação de Memória falhou");     //    Mensagem de erro
-    free(img);                                              //    Liberta de espaço da memória;
-    return NULL;                                            //    Como falhou retorna NULL
+  if (img == NULL) {  // Em caso de erro:
+    check((img != NULL), "Alocação de Memória falhou"); //    Mensagem de erro
+    free(img);  //    Liberta de espaço da memória;
+    return NULL;   //    Como falhou retorna NULL
   }
 
   img -> width = width;
@@ -189,13 +191,13 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 
   // Alocação de memória para o array de pixels
   img->pixel = (uint8*)malloc(width * height * sizeof(uint8));
-  if (img->pixel == NULL) {                                                               // Em caso de erro:
-    check((img->pixel != NULL), "AAlocação de memória para o data pixel falhou");         //      Mensagem de erro
-    free(img);                                                                            //     liberamos a memória alocada para a estrutura Image
-    return NULL;                                                                          //      Retorno NULL;
+  if (img->pixel == NULL) {   // Em caso de erro:
+    check((img->pixel != NULL), "AAlocação de memória para o data pixel falhou");  //      Mensagem de erro
+    free(img);  //     liberamos a memória alocada para a estrutura Image
+    return NULL;  //      Retorno NULL;
   }
 
-  return img;
+  return img;  //Retorna uma nova imagem
 }
 
 /// Destroy the image pointed to by (*imgp).
@@ -206,9 +208,9 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
-  free((*imgp)->pixel);   // Esta linha libera a memória alocada para o campo pixel
-  free(*imgp);            // Desaloca bloco de memória, liberta o número de bits que foram solicitados quando foi alocado.
-  *imgp = NULL;           // Desta maneira garantimos que (*imgp) é NULL
+  free((*imgp)->pixel);  // Libera a memória alocada para o campo pixel
+  free(*imgp);   // Desaloca bloco de memória, liberta o número de bits que foram solicitados quando foi alocado.
+  *imgp = NULL; // Garantimos que (*imgp) é NULL
 }
 
 
@@ -348,6 +350,7 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   // Insert your code here!
 
+  // Verificar se os limites não menores de zero nem passam os limites da imagem
   return (x >= 0 && y >= 0 && w > 0 && h > 0 && (x+w) < img->width && (y+h) < img->height);
 }
 
@@ -403,6 +406,11 @@ void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
   
+  /*
+    Para fazer o negativo da imagem, temos de percorrer todos os pixeis
+    da imagem e depois ao valor máximo de intensidade (PixMax -> 255)
+    subtraimos o valor atual da intensidade do pixel.
+  */
   for(int i=0; i<img->width * img->height; i++) {
     img->pixel[i] = PixMax - img->pixel[i];
   }
@@ -636,38 +644,38 @@ void ImageBlur(Image img, int dx, int dy) {
 
     assert(img != NULL);
 
-  Image tempImg = ImageCreate(img->width, img->height, img->maxval);
+    Image tempImg = ImageCreate(img->width, img->height, img->maxval);
 
-  for(int x=0; x < img->width; x++) {
-    for(int y=0; y < img->height; y++) {
+    for(int x=0; x < img->width; x++) {
+      for(int y=0; y < img->height; y++) {
 
-      double sum = 0.0;
-      int count = 0;
+        double sum = 0.0;
+        int count = 0;
 
-      for(int i=-dx; i < (dx+1); i++) {
-        for(int j=-dy; j < (dy+1); j++) {
+        for(int i=-dx; i < (dx+1); i++) {
+          for(int j=-dy; j < (dy+1); j++) {
 
-          if (ImageValidPos(img, i+x, j+y)) {
-            sum += ImageGetPixel(img, i+x, j+y);
-            count++;
+            if (ImageValidPos(img, i+x, j+y)) {
+              sum += ImageGetPixel(img, i+x, j+y);
+              count++;
+            }
           }
         }
+
+        double media = sum / count;
+
+        ImageSetPixel(tempImg, x, y, (uint8)(media+0.5));
+
       }
-
-      double media = sum / count;
-
-      ImageSetPixel(tempImg, x, y, (uint8)(media+0.5));
-
     }
-  }
 
-  for(int x=0; x < img->width; x++) {
-    for(int y=0; y < img->height; y++) {
-      ImageSetPixel(img, x, y, ImageGetPixel(tempImg, x, y));
-    }
-  } 
+    for(int x=0; x < img->width; x++) {
+      for(int y=0; y < img->height; y++) {
+        ImageSetPixel(img, x, y, ImageGetPixel(tempImg, x, y));
+      }
+    } 
 
-  ImageDestroy(&tempImg);
+    ImageDestroy(&tempImg);
   
   */
 
@@ -692,11 +700,19 @@ void ImageBlur(Image img, int dx, int dy) {
   for (int y = 0; y < img->height; y++) {
     for (int x = 0; x < img->width; x++) {
 
+      NUMCOMP += 3;
+
       sum = ImageGetPixel(img, x, y);
 
-      sum += (x != 0) ? summedAreaTable[x-1][y] : 0;  // Deve slatar a linha de indice 0
-      sum += (y != 0) ? summedAreaTable[x][y-1] : 0;  // Deve slatar a coluna de indice 0
-      sum -= (x != 0  && y != 0) ? summedAreaTable[x-1][y-1] : 0;  // Deve slatar a linha e a coluna de indice 0
+      if (x != 0) {
+        sum += summedAreaTable[x-1][y]; NUMOPERACOES+=1; // Deve slatar a linha de indice 0
+      }
+      if (y != 0) {
+        sum += summedAreaTable[x][y-1]; NUMOPERACOES+=1;   // Deve slatar a coluna de indice 0
+      }
+      if ((x != 0 && y != 0)) {
+        sum -= summedAreaTable[x-1][y-1]; NUMOPERACOES+=1;  // Deve slatar a linha e a coluna de indice 0
+      }
 
       summedAreaTable[x][y] = sum;  // Guarda o valor final na matriz.
     }
@@ -711,19 +727,27 @@ void ImageBlur(Image img, int dx, int dy) {
   for (int y = 0; y < img->height; y++) {
     for (int x = 0; x < img->width; x++) {
 
+      NUMCOMP += 4;
+
       /*
         Este calculo do maxX, maxY, ... serve para definir a janela, temos der ter em atenção que a janela não pode sair 
         dos limites de frame, ou seja, o maxX não pode ser menor de 0, caso contrário estariamos fora do frame, o mesmo se
         aplica para os seguintes valores.
       */
-      maxX = (x - dx - 1 < 0) ? 0 : x - dx - 1; 
-      maxY = (y - dy - 1 < 0) ? 0 : y - dy - 1;
+      maxX = (x - dx - 1 > 0) ? x - dx - 1 : 0; 
+      maxY = (y - dy - 1 > 0) ? y - dy - 1 : 0;
 
-      minX = (x + dx >= img->width) ? img->width - 1 : x + dx;
-      minY = (y + dy >= img->height) ? img->height - 1 : y + dy;
+      NUMOPERACOES += (x - dx - 1 > 0) ? 2 : 0; //Somar 2 ao numero de operações caso (x-dx-1>0);
+      NUMOPERACOES += (y - dy - 1 > 0) ? 2 : 0;  //Somar 2 ao numero de operações caso (y-dy-1>0);
+
+      minX = (x + dx + 1 > img->width) ? img->width - 1 : x + dx;
+      minY = (y + dy + 1 > img->height) ? img->height - 1 : y + dy;
+
+      NUMOPERACOES += 4; // Independete da operação no min será sempre feito 2 operações tanto para o x como o y
      
      //Em baixo vamos calcular a soma dos limites da janela.
       int sum = summedAreaTable[minX][minY] - summedAreaTable[maxX][minY] - summedAreaTable[minX][maxY] + summedAreaTable[maxX][maxY];
+      NUMOPERACOES += 3;
       double mean = (double)(sum) / (((minX - maxX) * (minY - maxY)));  //Calculo da media
 
       ImageSetPixel(img, x, y, (int)(mean+0.5));  // Temos que acrescentar 0.5 à media para podermos ter arredondamentos corretos
