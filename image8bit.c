@@ -782,8 +782,6 @@ void ImageBlur(Image img, int dx, int dy) {
 
       minX = (x + dx + 1 > img->width) ? img->width - 1 : x + dx;
       minY = (y + dy + 1 > img->height) ? img->height - 1 : y + dy;
-
-      NUMOPERACOES += 4; // Independete da operação no min será sempre feito 2 operações tanto para o x como o y
      
      //Em baixo vamos calcular a soma dos limites da janela.
       int sum = summedAreaTable[minX][minY] - summedAreaTable[maxX][minY] - summedAreaTable[minX][maxY] + summedAreaTable[maxX][maxY];
