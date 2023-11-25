@@ -780,9 +780,6 @@ void ImageBlur(Image img, int dx, int dy) {
       maxX = (x - dx - 1 > 0) ? x - dx - 1 : 0; 
       maxY = (y - dy - 1 > 0) ? y - dy - 1 : 0;
 
-      NUMOPERACOES += (x - dx - 1 > 0) ? 2 : 0; //Somar 2 ao numero de operações caso (x-dx-1>0);
-      NUMOPERACOES += (y - dy - 1 > 0) ? 2 : 0;  //Somar 2 ao numero de operações caso (y-dy-1>0);
-
       minX = (x + dx + 1 > img->width) ? img->width - 1 : x + dx;
       minY = (y + dy + 1 > img->height) ? img->height - 1 : y + dy;
 
