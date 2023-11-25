@@ -350,7 +350,7 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   // Insert your code here!
 
-  // Verificar se os limites não menores de zero nem passam os limites da imagem
+  // Verificar se os limites não são menores de zero nem passam os limites da imagem
   return (x >= 0 && y >= 0 && w > 0 && h > 0 && (x+w) < img->width && (y+h) < img->height);
 }
 
@@ -423,6 +423,11 @@ void ImageThreshold(Image img, uint8 thr) { ///
   assert (img != NULL);
   // Insert your code here!
 
+  /* 
+    Para aplicar o threshold, temos de percorrer todos os pixeis da imagem
+    e verificar se o valor do pixel é menor que o threshold, caso seja, 
+    o pixel fica preto, caso contrário fica branco.
+  */
   for(int i=0; i<(img->width*img->height); i++) {
 
     uint8 level = img->pixel[i];
@@ -446,6 +451,12 @@ void ImageBrighten(Image img, double factor) { ///
   assert (factor >= 0.0);
   // Insert your code here!
 
+  /*  
+    Para fazer o brighten da imagem, temos de percorrer todos os pixeis
+    da imagem e depois multiplicar o valor do pixel pelo factor, caso o
+    valor do pixel seja maior que o valor máximo de intensidade (PixMax -> 255)
+    o pixel fica com o valor máximo de intensidade.
+  */
   for (int i=0; i < (img->width * img->height); i++) {
 
     double newPixelValue = img->pixel[i] * factor;
@@ -480,8 +491,13 @@ Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
 
-  Image ImgR = ImageCreate(img->width, img->height, img->maxval);
+  Image ImgR = ImageCreate(img->width, img->height, img->maxval); // Criar uma nova imagem com as dimensões trocadas
 
+  /* 
+    Para fazer a rotação da imagem, temos de percorrer todos os pixeis
+    da imagem e depois trocar as coordenadas x e y, ou seja, a coordenada
+    x passa a ser a coordenada y e a coordenada y passa a ser a coordenada x.
+  */
   for(int y=0; y<img->height; y++) {
     for(int x=0; x<img->width; x++) {
       ImageSetPixel(ImgR, x, y, ImageGetPixel(img, (img->height - y - 1), x));
@@ -500,8 +516,13 @@ Image ImageMirror(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
 
-  Image ImgM = ImageCreate(img->height, img->width, img->maxval);
+  Image ImgM = ImageCreate(img->height, img->width, img->maxval);   // Criar uma nova imagem com as dimensões trocadas
 
+  /* 
+    Para fazer o mirror da imagem, temos de percorrer todos os pixeis
+    da imagem e depois trocar as coordenadas x e y, ou seja, a coordenada
+    x passa a ser a coordenada y e a coordenada y passa a ser a coordenada x.
+  */
   for(int y=0; y<img->height; y++) {
     for(int x=0; x<img->width; x++) {
       ImageSetPixel(ImgM, x, y, ImageGetPixel(img, img->width - x - 1, y));
@@ -526,8 +547,13 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
 
-  Image ImgC = ImageCreate(w, h, img->maxval);
+  Image ImgC = ImageCreate(w, h, img->maxval);  // Criar uma nova imagem com as dimensões do retangulo
 
+   /* 
+    Para fazer o crop da imagem, temos de percorrer todos os pixeis
+    da imagem e depois copiar os pixeis da imagem original para a nova
+    imagem.
+  */
   for(int i=0; i<w; i++) {
     for(int j=0; j<h; j++) {
       ImageSetPixel(ImgC, i, j, ImageGetPixel(img, x+i, y+j));
@@ -548,6 +574,11 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
 
+  /* 
+    Para fazer o paste da imagem, temos de percorrer todos os pixeis
+    da imagem e depois copiar os pixeis da imagem original para a nova
+    imagem.
+  */
   for(int i=0; i<img2->width; i++) {
     for(int j=0; j<img2->height; j++) {
 
@@ -570,8 +601,12 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
 
-  double newPixel;
+  double newPixel;  // Variável para guardar o novo valor do pixel
 
+  /* 
+    Para fazer o blend da imagem, temos de percorrer todos os pixeis
+    da imagem e depois calcular o novo valor do pixel.
+  */
   for(int i=0; i<img2->width; i++) {
     for(int j=0; j<img2->height; j++) {
 
@@ -592,6 +627,11 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
 
+  /* 
+    Para fazer o match da imagem, temos de percorrer todos os pixeis
+    da imagem e depois comparar os pixeis da imagem original com os pixeis
+    da nova imagem.
+  */
   for (int j = 0; j < img2->height; ++j) {
     for (int i = 0; i < img2->width; ++i) {
       uint8 pixel1 = ImageGetPixel(img1, x + i, y + j);
@@ -615,6 +655,11 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img2 != NULL);
   // Insert your code here!
 
+  /* 
+    Para fazer o locate da imagem, temos de percorrer todos os pixeis
+    da imagem e depois comparar os pixeis da imagem original com os pixeis
+    da nova imagem, esta comparação faz-se usando a função ImageMatchSubImage().
+  */
   for(int i=0; i < (img1->width - img2->width); i++) {
     for(int j=0; j < (img1->height - img2->height); j++) {
 
@@ -636,8 +681,6 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) {
-
-
   /*
   
     ! Função Básica:
